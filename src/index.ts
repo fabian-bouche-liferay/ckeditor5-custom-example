@@ -9,7 +9,7 @@ import {ButtonView} from '@ckeditor/ckeditor5-ui/dist/index.js';
 import {Emoji} from '@ckeditor/ckeditor5-emoji/dist/index.js';
 import {Mention} from '@ckeditor/ckeditor5-mention/dist/index.js';
 import {Indent, IndentBlock} from '@ckeditor/ckeditor5-indent/dist/index.js';
-
+//import {PasteFromOfficeEnhanced} from '@ckeditor/ckeditor5-paste-from-office-enhanced/dist/index.js';
 import {
 	EditorConfigTransformer,
 	EditorTransformer,
@@ -95,7 +95,7 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 
 		const updatedConfig = {
 			...config,
-			extraPlugins: [Fullscreen, Mention, Emoji, HelloWorld, Indent, IndentBlock],
+			extraPlugins: [Fullscreen, Mention, Emoji, HelloWorld, Indent, IndentBlock/*, PasteFromOfficeEnhanced **DOESN'T WORK** */],
 			toolbar,
 		};
 

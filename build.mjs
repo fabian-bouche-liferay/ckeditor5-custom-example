@@ -18,6 +18,7 @@ await build({
 	format: 'esm',
 	outdir: 'build',
 	entryNames: '[name]-[hash]',
+
 	external: EXTERNAL_PREFIXES.map((p) => `${p}*`),
 });
 
