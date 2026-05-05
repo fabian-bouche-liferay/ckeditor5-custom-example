@@ -9,11 +9,24 @@ import {ButtonView} from '@ckeditor/ckeditor5-ui/dist/index.js';
 import {Emoji} from '@ckeditor/ckeditor5-emoji/dist/index.js';
 import {Mention} from '@ckeditor/ckeditor5-mention/dist/index.js';
 import {Indent, IndentBlock} from '@ckeditor/ckeditor5-indent/dist/index.js';
-//import {PasteFromOfficeEnhanced} from '@ckeditor/ckeditor5-paste-from-office-enhanced/dist/index.js';
+import {LinkImage} from '@ckeditor/ckeditor5-link/dist/index.js';
+import {
+	SpecialCharacters,
+	SpecialCharactersEssentials,
+} from '@ckeditor/ckeditor5-special-characters/dist/index.js';
+import {
+	Table,
+	TableCellProperties,
+	TableColumnResize,
+	TableProperties,
+	TableToolbar,
+} from '@ckeditor/ckeditor5-table/dist/index.js';
 import {
 	EditorConfigTransformer,
 	EditorTransformer,
 } from '@liferay/js-api/editor';
+
+const unique = <T>(items: T[]) => [...new Set(items)];
 
 const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 
@@ -45,61 +58,67 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 			}
 		}
 
-		const toolbar = [
-
-			// If plugin is in advanced preset, we can just add a toolabar entry.
-
-			'AccessibilityHelp',
-			'undo',
-			'redo',
-			'alignment',
-			{
-
-				// A dropdown with custom icon.
-
-				icon: 'text',
-				items: ['bold', 'italic', 'underline'],
-				label: 'Text formatting',
-			},
-			{
-
-				// A dropdown with text label instead of icon.
-
-				icon: false,
-				items: ['bulletedList', 'numberedList'],
-				label: 'Lists',
-			},
-
-			// An official plugin that was added as extra in `frontend-editor-ckeditor-sample-web`.
-
-			'bookmark',
-
-			// A custom plugin that was added in `frontend-editor-ckeditor-sample-web`.
-
-			'timestamp',
-
-			// An official plugin not in advanced preset.
-
-			'fullscreen',
-
-			// An official plugin not in advanced preset.
-
-			'emoji',
-
-			'outdent', 'indent',
-
-			// A custom plugin.
-
-			'helloworld',
-		];
-
-		const updatedConfig = {
+		return {
 			...config,
-			extraPlugins: [Fullscreen, Mention, Emoji, HelloWorld, Indent, IndentBlock/*, PasteFromOfficeEnhanced **DOESN'T WORK** */],
-			toolbar,
-		};
 
-		return updatedConfig;
+			extraPlugins: unique([
+				...(config.extraPlugins || []),
+				Fullscreen,
+				Mention,
+				Emoji,
+				SpecialCharacters,
+				SpecialCharactersEssentials,
+				HelloWorld,
+				Table,
+				TableToolbar,
+				TableProperties,
+				TableCellProperties,
+				TableColumnResize,
+				Indent,
+				IndentBlock,
+				LinkImage,
+			]),
+
+			image: {
+				...(config.image || {}),
+				toolbar: unique([
+					...(config.image?.toolbar || []),
+					'linkImage',
+				]),
+			},
+
+			table: {
+				...(config.table || {}),
+
+				contentToolbar: unique([
+					...(config.table?.contentToolbar || []),
+					'tableColumn',
+					'tableRow',
+					'mergeTableCells',
+					'tableProperties',
+					'tableCellProperties',
+				]),
+			},
+
+			toolbar: {
+				...(typeof config.toolbar === 'object' && !Array.isArray(config.toolbar)
+					? config.toolbar
+					: {}),
+
+				items: unique([
+					...(Array.isArray(config.toolbar)
+						? config.toolbar
+						: config.toolbar?.items || []),
+					'fullscreen',
+					'emoji',
+					'specialCharacters',
+					'insertTable',
+					'outdent',
+					'indent',
+					'helloworld',
+				]),
+			},
+		};
 	}
 
 	// Alloy Editor
@@ -116,7 +135,7 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 			(selection: ISelection) => selection.name === 'text'
 		);
 
-		if (textSelection.buttons) {
+		if (textSelection?.buttons) {
 			textSelection.buttons.push('video');
 
 			return {
@@ -126,22 +145,24 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 		}
 	}
 
-	// CKEditor
+	// CKEditor 4
 
 	const toolbar: string | [string[]] = config.toolbar;
 
 	const buttonName = 'AICreator';
-	let transformedConfig: any;
+	let transformedConfig: any = {...config};
 
 	if (typeof toolbar === 'string') {
 		const activeToolbar = config[`toolbar_${toolbar}`];
 
-		activeToolbar.push([buttonName]);
+		if (Array.isArray(activeToolbar)) {
+			activeToolbar.push([buttonName]);
 
-		transformedConfig = {
-			...config,
-			[`toolbar_${toolbar}`]: activeToolbar,
-		};
+			transformedConfig = {
+				...config,
+				[`toolbar_${toolbar}`]: activeToolbar,
+			};
+		}
 	}
 	else if (Array.isArray(toolbar)) {
 		toolbar.push([buttonName]);
