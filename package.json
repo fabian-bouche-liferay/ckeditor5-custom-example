@@ -7,6 +7,8 @@
 		"@ckeditor/ckeditor5-core": "46.0.3",
 		"@ckeditor/ckeditor5-fullscreen": "46.0.3",
 		"@ckeditor/ckeditor5-ui": "46.0.3",
+		"@ckeditor/ckeditor5-widget": "46.0.3",
+		"@ckeditor/ckeditor5-utils": "46.0.3",
 		"@ckeditor/ckeditor5-paste-from-office-enhanced": "46.0.3",
 		"esbuild": "^0.27.4",
 		"typescript": "^5.0.4"
