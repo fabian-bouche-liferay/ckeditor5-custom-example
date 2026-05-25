@@ -27,6 +27,7 @@ import {
 } from '@liferay/js-api/editor';
 
 import CalloutPlugin from './plugin/calloutPlugin.js';
+import CardPlugin from './plugin/cardPlugin.js';
 
 const unique = <T>(items: T[]) => [...new Set(items)];
 
@@ -65,6 +66,7 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 
 			extraPlugins: unique([
 				...(config.extraPlugins || []),
+				CardPlugin,
 				CalloutPlugin,
 				Fullscreen,
 				Mention,
@@ -119,7 +121,8 @@ const editorConfigTransformer: EditorConfigTransformer<any> = (config) => {
 					'outdent',
 					'indent',
 					'helloworld',
-					'callout',					
+					'clayCard',
+					'callout'
 				]),
 			},
 		};
